@@ -1,2 +1,6 @@
+# Exclude distribution files
+*.egg-info
+__pycache__
+
 # Exclude VS Code config
 .vscode
