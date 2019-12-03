@@ -56,7 +56,7 @@ jobs:
             conda install -y --file requirements-dev.txt
             conda install -y --file requirements-thirdparty.txt
             conda install -y --file requirements.txt
-            pip install -y -r requirements-pip.txt
+            pip install -r requirements-pip.txt
             pip install -e .
             pytest -v --cov=pymetabc --cov-report xml:.coverage.xml
       # - save_cache:
