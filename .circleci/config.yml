@@ -48,7 +48,10 @@ jobs:
           command: |
             export PATH="$HOME/miniconda/bin:$PATH"
             # conda update -y conda
-            conda create -n pymetabc python=$PYTHON_VERSION -c conda-forge bioconda defaults
+            conda config --add channels defaults
+            conda config --add channels bioconda
+            conda config --add channels conda-forge
+            conda create -n pymetabc python=$PYTHON_VERSION
             conda activate pymetabc
             conda install -y --file requirements-dev.txt
             conda install -y --file requirements-thirdparty.txt
@@ -67,9 +70,9 @@ jobs:
       #       . venv/bin/activate
       #       pip install -e .  # Install the repo as a package
 
-      - store_artifacts:
-          path: tests/test_output/*.*
-          destination: tests/test_output/
+      # - store_artifacts:
+      #     path: tests/test_output/*.*
+      #     destination: tests/test_output/
       - store_artifacts:
           path: .coverage.xml
           destination: .coverage.xml
