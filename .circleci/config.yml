@@ -25,10 +25,10 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - pymetabc-dependencies-pip-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}-{{ checksum "requirements-pip.txt" }}-{{ checksum "requirements-thirdparty.txt" }}
-            - pymetabc-dependencies-pip-
+      # - restore_cache:
+      #     keys:
+      #       - pymetabc-dependencies-pip-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}-{{ checksum "requirements-pip.txt" }}-{{ checksum "requirements-thirdparty.txt" }}
+      #       - pymetabc-dependencies-pip-
 
       - run:
           name: update apt-get
@@ -47,33 +47,29 @@ jobs:
           name: Setup environment and run tests
           command: |
             export PATH="$HOME/miniconda/bin:$PATH"
-            conda update -y conda
+            # conda update -y conda
             conda create -n pymetabc python=$PYTHON_VERSION -c conda-forge bioconda defaults
-            source activate pymetabc
+            conda activate pymetabc
             conda install -y --file requirements-dev.txt
             conda install -y --file requirements-thirdparty.txt
             conda install -y --file requirements.txt
             pip install -y -r requirements-pip.txt
             pip install -e .
-            python --version
-      - save_cache:
-          paths:
-            - ./venv
-          key: pymetabc-dependencies-pip-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}-{{ checksum "requirements-pip.txt" }}-{{ checksum "requirements-thirdparty.txt" }}
-
-      - run:
-          name: install pymetabc
-          command: |
-            . venv/bin/activate
-            pip install -e .  # Install the repo as a package
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
             pytest -v --cov=pymetabc --cov-report xml:.coverage.xml
+      # - save_cache:
+      #     paths:
+      #       - ./venv
+      #     key: pymetabc-dependencies-pip-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-dev.txt" }}-{{ checksum "requirements-pip.txt" }}-{{ checksum "requirements-thirdparty.txt" }}
+
+      # - run:
+      #     name: install pymetabc
+      #     command: |
+      #       . venv/bin/activate
+      #       pip install -e .  # Install the repo as a package
+
       - store_artifacts:
-          path: tests/test_output
-          destination: tests/test_output
+          path: tests/test_output/*.*
+          destination: tests/test_output/
       - store_artifacts:
           path: .coverage.xml
           destination: .coverage.xml
