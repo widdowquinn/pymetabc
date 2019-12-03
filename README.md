@@ -113,7 +113,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Graphical Output
 
-`pymetabc` produces interactive graphics using [`bokeh`](https://bokeh.org/) that can be embedded in your own reports.
+`pymetabc` produces interactive graphics using [`bokeh`](https://bokeh.org/) that can be embedded in your own reports. (**NOTE:** these do not display on the `GitHub` repository page, but do show on the software home page.)
 
 ### `trimmomatic` output summaries
 
@@ -128,7 +128,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### Abundance by unique read
 
-<iframe src="tests/test_targets/04_abundance_by_hash.html"
+<iframe src="tests/test_targets/05_abundance_by_hash.html"
     sandbox="allow-same-origin allow-scripts"
     width="100%"
     height="800"
