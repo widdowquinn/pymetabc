@@ -27,12 +27,12 @@ Lightweight trimming, merging, thresholding and visualisation of metabarcoding r
 ## Quick Start
 
 ```bash
-$ pymetabc -v tests/test_input tests/test_out
+$ pymetabc -v tests/test_input tests/test_output
 [...]
 INFO: Stage 1: Process input data
 INFO: 	Found 16 samples:
 INFO: 		EB_Plate1_1, F1_S1, F1_S16, F1_S44, F2_S25, ...
-INFO: Writing input file paths to tests/test_out/01_input_files.tab
+INFO: Writing input file paths to tests/test_output/01_input_files.tab
 INFO: Stage 2: Trim input reads
 [...]
 INFO: 	Total sample:hash combinations: 17
@@ -42,12 +42,12 @@ INFO: 		fb474975bd65353181801c5a7b857379: 580011
 INFO: 		6fd39f5a082f10a0f0877acc24b45710: 552062
 INFO: 		981f24f28919efce3dbbe696697b38d0: 287606
 INFO: 		5626d1a71a6c37c32049f427b4fdf70b: 1052
-INFO: Plotting read abundance by hash to tests/test_out/05_abundance_by_hash.html
-INFO: Plotting read abundance by sample to tests/test_out/05_abundance_by_sample.html
+INFO: Plotting read abundance by hash to tests/test_output/05_abundance_by_hash.html
+INFO: Plotting read abundance by sample to tests/test_output/05_abundance_by_sample.html
 INFO: Completed. time taken: 186.956
 
-$ tree tests/test_out -L 1
-tests/test_out
+$ tree tests/test_output -L 1
+tests/test_output
 ├── 01_input_files.tab
 ├── 02_summaries.html
 ├── 02_trimmed

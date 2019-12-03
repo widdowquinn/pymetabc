@@ -9,4 +9,4 @@ __pycache__
 .mypy_cache
 
 # Exclude test output
-tests/test_output
+tests/test_output/
