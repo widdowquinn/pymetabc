@@ -6,14 +6,10 @@ import subprocess
 
 from argparse import Namespace
 from pathlib import Path
-from typing import Generator, List
+from typing import Generator
 
 import pandas as pd
 
-from bokeh.palettes import Category20  # pylint: disable=no-name-in-module
-from bokeh.layouts import gridplot
-from bokeh.models import ColumnDataSource
-from bokeh.plotting import figure, output_file, save
 from tqdm import tqdm
 
 
@@ -80,68 +76,6 @@ def parse_trimmomatic_summary(dfm: pd.DataFrame) -> pd.DataFrame:
             else:
                 dfm[key] = int(val)
     return dfm
-
-
-def plot_trimmomatic_summary(
-    data: pd.DataFrame, ofname: Path, plot_width: int = 1800, plot_height: int = 280
-) -> None:
-    """Return bokeh plot of trimmomatic summary data.
-
-    :param dfm:  pd.DataFrame containing one row per sample
-    :param ofname;  Path to write HTML bokeh output
-    :param plot_width:  int, pixel width of plot
-    :param plot_height:  int, pixel height of each plot in the grid
-
-    This returns a gridplot of scatterplots. Each scatterplot represents a
-    single measure returned by trimmomatic, for all samples in the dataframe.
-
-    The plots are stacked vertically in column order.
-
-    Plot zooms are linked.
-    """
-    # Plot summary data
-    source = ColumnDataSource(data.sort_values(["sample_name"]))
-    figures = []  # type: List
-    for colname, color in zip(
-        data.loc[:, "Input Read Pairs":"Dropped Read Percent"].columns, Category20[10]
-    ):
-        # Each plot gets a tooltip showing sample name and plotted value
-        tooltips = [("sample", "@sample_name"), ("value", f"@{{{colname}}}")]
-
-        # First figure gets the range definition, all other plots are linked
-        # to this, so zooming one zooms all of them.
-        if len(figures) != 0:
-            fig = figure(
-                x_range=figures[0].x_range,
-                plot_width=plot_width,
-                plot_height=plot_height,
-                title=colname,
-                tooltips=tooltips,
-            )
-        else:
-            fig = figure(
-                x_range=source.data["sample_name"],
-                plot_width=plot_width,
-                plot_height=plot_height,
-                title=colname,
-                tooltips=tooltips,
-            )
-
-        # Construct scatterplot
-        fig.scatter(
-            x="sample_name",
-            y=colname,
-            source=source,
-            color=color,
-            size=10,
-            hover_fill_alpha=1,
-            alpha=0.4,
-        )
-        fig.xaxis.major_label_orientation = "vertical"
-        figures.append(fig)
-
-    output_file(ofname)
-    save(gridplot([[_] for _ in figures]))
 
 
 def run_trimmomatic(dfm: pd.DataFrame, args: Namespace) -> pd.DataFrame:

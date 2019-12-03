@@ -8,7 +8,7 @@ from argparse import Namespace
 from logging import Logger
 from typing import List, Optional
 
-from pymetabc import flash, hashing, io, trimmomatic
+from pymetabc import flash, hashing, io, plotting, thresholding, trimmomatic
 
 from .logger import build_logger
 from .parsers import parse_cmdline
@@ -81,6 +81,9 @@ def run_pipeline(args: Namespace, logger: Logger) -> int:
     args.hashdir = args.outdir / args.hash_dir
     logger.info("\tHashing output: %s", args.hashdir)
     args.hashdir.mkdir(exist_ok=True)
+    args.threshdir = args.outdir / args.thresh_dir
+    logger.info("\tThresholding output: %s", args.threshdir)
+    args.threshdir.mkdir(exist_ok=True)
 
     # Process input data
     logger.info("Stage 1: Process input data")
@@ -110,7 +113,7 @@ def run_pipeline(args: Namespace, logger: Logger) -> int:
     # Write bokeh plot of trimmomatic summary data to disk
     ofname = args.outdir / "02_summaries.html"
     logger.info("Writing trimmomatic summaries plot to %s", ofname)
-    trimmomatic.plot_trimmomatic_summary(dfm, ofname)
+    plotting.plot_trimmomatic_summary(dfm, ofname)
 
     # Merge trimmed reads
     logger.info("Stage 3: Merge trimmed reads")
@@ -135,14 +138,44 @@ def run_pipeline(args: Namespace, logger: Logger) -> int:
 
     # How many unique hashes are there?
     uhashes = hashing.count_unique_hashes(args.hashdir)
-    logger.info("\tThere are %d unique merged reads (abundance > 1)", len(uhashes))
-    ofname = args.outdir / "04_hashed_abundance_distribution.html"
-    logger.info("Writing read abundance distribution plot to %s", ofname)
-    hashing.plot_hashed_abundance_distribution(uhashes, ofname)
+    logger.info("\tThere are %d unique merged reads", len(uhashes))
+    logger.info("\tMost abundant read hashes:")
+    top10 = sorted([(val, key) for (key, val) in uhashes.items()], reverse=True)[:10]
+    for val, key in top10:
+        logger.info("\t\t%s: %d", key, val)
 
-    # Write bokeh plot of hashed read abundances to disk
-    ofname = args.outdir / "04_hashed_abundances.html"
-    logger.info("Writing hashed read abundance plot to %s", ofname)
-    # trimmomatic.plot_read_hash_abundances(dfm, ofname)
+    # Threshold merged reads
+    logger.info("Stage 5: Threshold merged reads")
+    logger.info("\tThreshold mode: %s", args.thresh_mode)
+    dfm["thresholded_reads"] = list(thresholding.add_thresholded_reads(dfm, args))
+
+    # Write table of thresholded data to disk
+    ofname = args.outdir / "05_thresholded.tab"
+    logger.info("Writing thresholded data table to %s", ofname)
+    dfm.to_csv(ofname, sep="\t", encoding="utf-8")
+
+    # Write table of thresholded reads by sample to disk
+    ofname = args.outdir / "05_thresholded_reads.tab"
+    logger.info("Writing thresholded read hashes to %s", ofname)
+    readtable = hashing.get_hashes_by_sample(args.threshdir, args)
+    readtable.to_csv(ofname, sep="\t", encoding="utf-8")
+    logger.info("\tTotal sample:hash combinations: %d", len(readtable))
+
+    # How many unique hashes are there?
+    uhashes = hashing.count_unique_hashes(args.threshdir)
+    logger.info("\t%d unique hashes survived the threshold", len(uhashes))
+    logger.info("\tMost abundant thresholded read hashes:")
+    top10 = sorted([(val, key) for (key, val) in uhashes.items()], reverse=True)[:10]
+    for val, key in top10:
+        logger.info("\t\t%s: %d", key, val)
+
+    # Plot read abundance by hash and sample
+    ofname = args.outdir / "05_abundance_by_hash.html"
+    logger.info("Plotting read abundance by hash to %s", ofname)
+    plotting.plot_read_hash_abundances(readtable, ofname)
+
+    ofname = args.outdir / "05_abundance_by_sample.html"
+    logger.info("Plotting read abundance by sample to %s", ofname)
+    plotting.plot_sample_hash_abundances(readtable, ofname)
 
     return 0

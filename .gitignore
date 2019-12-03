@@ -4,3 +4,6 @@ __pycache__
 
 # Exclude VS Code config
 .vscode
+
+# Exclude Python cruft
+.mypy_cache

@@ -171,4 +171,48 @@ def build_parser() -> ArgumentParser:
         help="directory name for merged read hashing output",
     )
 
+    # Thresholding
+    parser_main.add_argument(
+        "--thresh_dir",
+        action="store",
+        dest="thresh_dir",
+        default="05_thresholded",
+        type=str,
+        help="directory name for thresholded read output",
+    )
+    parser_main.add_argument(
+        "--thresh_mode",
+        action="store",
+        dest="thresh_mode",
+        default="cutoff",
+        type=str,
+        help="mode for thresholding merged reads",
+    )
+    parser_main.add_argument(
+        "--thresh_cutoff",
+        action="store",
+        dest="thresh_cutoff",
+        default=1000,
+        type=int,
+        help="threshold minimum abundance in a run",
+    )
+    # To be recovered when a control abundance threshold method is
+    # implemented
+    # parser_main.add_argument(
+    #     "--thresh_controls",
+    #     action="store",
+    #     dest="thresh_controls",
+    #     default="",
+    #     type=str,
+    #     help="list of control sample names",
+    # )
+    # parser_main.add_argument(
+    #     "--thresh_percentile",
+    #     action="store",
+    #     dest="thresh_percentile",
+    #     default=0.95,
+    #     type=float,
+    #     help="threshold control percentile",
+    # )
+
     return parser_main

@@ -28,10 +28,27 @@ def add_hashed_reads(dfm: pd.DataFrame, args: Namespace) -> Generator:
         dfm.iterrows(), disable=args.disable_tqdm
     ):  # one subdirectory per sample
         readfile = list(Path(row["merged_dir"]).glob("*.extendedFrags.fastq"))[0]
-        hashed_reads = fastq_to_hash_abundance(readfile)
         ofname = (args.hashdir / readfile.name).with_suffix(".fasta")
-        SeqIO.write(hashed_reads, ofname, "fasta")
+        if not args.dryrun:
+            hashed_reads = fastq_to_hash_abundance(readfile)
+            SeqIO.write(hashed_reads, ofname, "fasta")
         yield str(ofname)
+
+
+def count_unique_hashes(indir: Path) -> Dict:
+    """Return a Dict of counts keyed by hash for merged reads in the passed directory.
+
+    :param indir:  Path to directory containing FASTA files of merged, hashed reads
+
+    Does not return counts of reads with abundance equal to 1
+    """
+    hashdict = defaultdict(int)  # type: Dict[str, int]
+    for fname in indir.iterdir():
+        with fname.open("r") as ifh:
+            for seqdata in SeqIO.parse(ifh, "fasta"):
+                hsh, cnt = seqdata.id.split("_")
+                hashdict[hsh] += int(cnt)
+    return hashdict
 
 
 def fastq_to_hash_abundance(fpath: Path) -> List[Any]:
@@ -52,17 +69,20 @@ def fastq_to_hash_abundance(fpath: Path) -> List[Any]:
     return hashed
 
 
-def count_unique_hashes(indir: Path) -> Dict:
-    """Return a Dict of counts keyed by hash for merged reads in the passed directory.
+def get_hashes_by_sample(indir: Path, args: Namespace) -> pd.DataFrame:
+    """Return pandas DataFrame in tidy format with read hash and abundance by sample.
 
-    :param indir:  Path to directory containing FASTA files of merged, hashed reads
-
-    Does not return counts of reads with abundance equal to 1
+    :param indir:  Path to input directory of hashed read files
+    :param args:  Namespace of parsed command-line options
     """
-    hashdict = defaultdict(int)
-    for fname in indir.iterdir():
-        with fname.open("r") as ifh:
-            for seqdata in SeqIO.parse(ifh, "fasta"):
-                hsh, cnt = seqdata.id.split("_")
-                hashdict[hsh] += cnt
-    return hashdict
+    data = list()
+    for ifname in tqdm(indir.iterdir(), disable=args.disable_tqdm):
+        if ifname.suffix == ".fasta":
+            fstem = ifname.stem.split("_")[0]
+            with ifname.open("r") as ifh:
+                for read in SeqIO.parse(ifh, "fasta"):
+                    rhash, abundance = read.id.split("_")
+                    data.append((fstem, rhash, int(abundance)))
+    return pd.DataFrame(
+        data, columns=["sample_name", "read_hash", "abundance"]
+    ).set_index("sample_name")
