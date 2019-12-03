@@ -48,6 +48,7 @@ jobs:
           command: |
             export PATH="$HOME/miniconda/bin:$PATH"
             # conda update -y conda
+            conda init bash
             conda config --add channels defaults
             conda config --add channels bioconda
             conda config --add channels conda-forge
