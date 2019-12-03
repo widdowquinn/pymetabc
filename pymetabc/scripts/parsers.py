@@ -5,6 +5,7 @@ import sys
 
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, Namespace
 
+from multiprocessing import cpu_count
 from pathlib import Path
 from typing import List, Optional
 
@@ -57,7 +58,7 @@ def build_parser() -> ArgumentParser:
         "--threads",
         action="store",
         dest="threads",
-        default=1,
+        default=cpu_count(),
         type=int,
         help="number of threads to use",
     )
