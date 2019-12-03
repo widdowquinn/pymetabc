@@ -48,12 +48,11 @@ jobs:
           command: |
             export PATH="$HOME/miniconda/bin:$PATH"
             # conda update -y conda
-            conda init bash
             conda config --add channels defaults
             conda config --add channels bioconda
             conda config --add channels conda-forge
             conda create -n pymetabc python=$PYTHON_VERSION
-            conda activate pymetabc
+            source activate pymetabc
             conda install -y --file requirements-dev.txt
             conda install -y --file requirements-thirdparty.txt
             conda install -y --file requirements.txt
