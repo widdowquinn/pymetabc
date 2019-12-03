@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 from pymetabc import ADAPTER_PATH
-from pymetabc.scripts.pymetabc import run_pipeline
+from pymetabc.scripts.pymetabc import run_main, run_pipeline
 
 
 class DirPaths(NamedTuple):
@@ -55,7 +55,7 @@ class TestPymetabcCLI(unittest.TestCase):
         # Set up paths to third party executables
         self.exes = ThirdPartyExes("trimmomatic", "flash")
 
-        # Set command-line arguments
+        # Set namespace arguments
         self.args = Namespace(
             logfile=None,
             verbose=False,
@@ -78,6 +78,13 @@ class TestPymetabcCLI(unittest.TestCase):
             thresh_cutoff=1000,
         )
 
-    def test_cli(self) -> None:
-        """Test CLI run of pymetabc."""
+        # Set command-line arguments
+        self.argv = ["-t", cpu_count(), self.dirpaths.indir, self.dirpaths.outdir]
+
+    def test_script(self) -> None:
+        """Test script run of pymetabc."""
         run_pipeline(self.args, self.logger)
+
+    def test_cli(self) -> None:
+        """Test CLI parsing run of pymetabc."""
+        run_main(self.argv, self.logger)
