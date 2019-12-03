@@ -122,7 +122,7 @@ Mouseover points to see samples and abundances.
 <iframe src="tests/test_targets/02_summaries.html"
     sandbox="allow-same-origin allow-scripts"
     width="200%"
-    height="2200"
+    height="2400"
     scrolling="yes"
     seamless="seamless"
     frameborder="0">
@@ -135,7 +135,7 @@ Mouseover points to see samples and abundances.
 <iframe src="tests/test_targets/05_abundance_by_hash.html"
     sandbox="allow-same-origin allow-scripts"
     width="100%"
-    height="600"
+    height="800"
     scrolling="yes"
     seamless="seamless"
     frameborder="0">
@@ -148,7 +148,7 @@ Mouseover points to see read hashes and abundances; click on the legend to highl
 <iframe src="tests/test_targets/05_abundance_by_sample.html"
     sandbox="allow-same-origin allow-scripts"
     width="200%"
-    height="600"
+    height="800"
     scrolling="yes"
     seamless="seamless"
     frameborder="0">
