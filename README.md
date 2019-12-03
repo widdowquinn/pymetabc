@@ -117,10 +117,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### `trimmomatic` output summaries
 
+Mouseover points to see samples and abundances.
+
 <iframe src="tests/test_targets/02_summaries.html"
     sandbox="allow-same-origin allow-scripts"
-    width="100%"
-    height="1800"
+    width="200%"
+    height="2200"
     scrolling="yes"
     seamless="seamless"
     frameborder="0">
@@ -128,10 +130,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### Abundance by unique read
 
+Mouseover points to see samples and abundances.
+
 <iframe src="tests/test_targets/05_abundance_by_hash.html"
     sandbox="allow-same-origin allow-scripts"
     width="100%"
-    height="800"
+    height="600"
     scrolling="yes"
     seamless="seamless"
     frameborder="0">
@@ -139,10 +143,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### Read abundance by sample
 
+Mouseover points to see read hashes and abundances; click on the legend to highlight hashes.
+
 <iframe src="tests/test_targets/05_abundance_by_sample.html"
     sandbox="allow-same-origin allow-scripts"
-    width="100%"
-    height="800"
+    width="200%"
+    height="600"
     scrolling="yes"
     seamless="seamless"
     frameborder="0">
